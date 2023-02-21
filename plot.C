@@ -16,7 +16,7 @@ void fillDjHist(JetTree *j, TH1D* h)
    double sumEntry=0;
    h->Sumw2();
    for (int i=0;i<j->fChain->GetEntries();i++) {
-      if (i%10000==0) cout <<i <<" "<<->fChain->GetEntries()<<endl;
+      if (i%10000==0) cout <<i <<" "<<j->fChain->GetEntries()<<endl;
       j->GetEntry(i);
       if ((*j->LeadingPhotonPt)[0]<40) continue;
       for (int k=0;k<j->SignalJet03JewelPt->size();k++) {
