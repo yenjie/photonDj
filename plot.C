@@ -1,6 +1,13 @@
 #include "JetTree.C"
 #include <cmath>
 #include <iostream>
+
+class Data {
+public:
+  Double_t photonPt, photonEta, photonPhi, jetPt, jetEta, jetPhi, dphi, dj, weight;
+};
+
+
 double calcPhi(double phi)
 {
    phi = fmod(phi + M_PI, 2*M_PI);
@@ -11,7 +18,7 @@ double calcPhi(double phi)
    return phi;
 }
 
-void fillDjHist(JetTree *j, TH1D* h)
+void fillDjHist(JetTree *j, TH1D* h, Data *data, TTree *t)
 {
    double sumEntry=0;
    h->Sumw2();
@@ -28,6 +35,16 @@ void fillDjHist(JetTree *j, TH1D* h)
 	    double dj = sqrt(dPhi*dPhi+dEta*dEta);
 	    h->Fill(dj,(*j->EventWeight)[0]);
 	    sumEntry+=(*j->EventWeight)[0];
+	    data->weight=(*j->EventWeight)[0];
+	    data->photonPt= (*j->LeadingPhotonPt)[0];
+	    data->photonEta= (*j->LeadingPhotonEta)[0];
+	    data->photonPhi= (*j->LeadingPhotonPhi)[0];
+	    data->jetPt= (*j->SignalJet03JewelPt)[k];
+	    data->jetEta= (*j->SignalJet03JewelEta)[k];
+	    data->jetPhi= (*j->SignalJet03JewelPhi)[k];
+	    data->dj=dj;
+	    data->dphi=dPhi;
+	    t->Fill();
 	 }
       }
    }
@@ -53,6 +70,20 @@ void plot()
    
    TFile *outf = new TFile("output.root","recreate");
    
+   TTree* outputTreeJewelPP = new TTree("tJewelPP","");
+   Data *dataJewelPP = new Data;
+   outputTreeJewelPP->Branch("data", dataJewelPP, "photonPt/D:photonEta/D:photonPhi/D:jetPt/D:jetEta/D:jetPhi/D:dphi/D:dj/D:weight/D");
+   TTree* outputTreeJewelPbPb = new TTree("tJewelPbPb","");
+   Data *dataJewelPbPb = new Data;
+   outputTreeJewelPbPb->Branch("data", dataJewelPbPb, "photonPt/D:photonEta/D:photonPhi/D:jetPt/D:jetEta/D:jetPhi/D:dphi/D:dj/D:weight/D");
+   TTree* outputTreePyquenPP = new TTree("tPyquenPP","");
+   Data *dataPyquenPP = new Data;
+   outputTreePyquenPP->Branch("data", dataPyquenPP, "photonPt/D:photonEta/D:photonPhi/D:jetPt/D:jetEta/D:jetPhi/D:dphi/D:dj/D:weight/D");
+   TTree* outputTreePyquenPbPb = new TTree("tPyquenPbPb","");
+   Data *dataPyquenPbPb = new Data;
+   outputTreePyquenPbPb->Branch("data", dataPyquenPbPb, "photonPt/D:photonEta/D:photonPhi/D:jetPt/D:jetEta/D:jetPhi/D:dphi/D:dj/D:weight/D");
+
+   
    const int nBin = 10;
    double myBins[nBin+1] = {0, 0.015, 0.03, 0.045, 0.06, 0.08, 0.1, 0.12, 0.15, 0.2, 0.3};
    
@@ -69,15 +100,19 @@ void plot()
    JetTree *PyquenPbPb = new JetTree(tPyquenPbPb);
 
    cout <<"Done"<<endl;
-   fillDjHist(JewelPP,hJewelPP);
-   fillDjHist(JewelPbPb,hJewelPbPb);
-   fillDjHist(PyquenPP,hPyquenPP);
-   fillDjHist(PyquenPbPb,hPyquenPbPb);
+   fillDjHist(JewelPP,hJewelPP, dataJewelPP, outputTreeJewelPP);
+   fillDjHist(JewelPbPb,hJewelPbPb, dataJewelPbPb, outputTreeJewelPbPb);
+   fillDjHist(PyquenPP,hPyquenPP, dataPyquenPP, outputTreePyquenPP);
+   fillDjHist(PyquenPbPb,hPyquenPbPb, dataPyquenPbPb, outputTreePyquenPbPb);
    
    hJewelPP->Draw();
    hJewelPP->Write();
    hJewelPbPb->Write();
    hPyquenPP->Write();
    hPyquenPbPb->Write();
+   outputTreeJewelPP->Write();
+   outputTreeJewelPbPb->Write();
+   outputTreePyquenPP->Write();
+   outputTreePyquenPbPb->Write();
    
 }
