@@ -1,6 +1,9 @@
 #include <TFile.h>
 #include <TH1D.h>
 #include <TCanvas.h>
+#include <TLegend.h>
+#include <TLine.h>
+
 
 void compare()
 {
