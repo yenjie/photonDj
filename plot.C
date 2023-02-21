@@ -15,6 +15,7 @@ void fillDjHist(JetTree *j, TH1D* h)
    double sumEntry=0;
    h->Sumw2();
    for (int i=0;i<j->fChain->GetEntries();i++) {
+      if (i%10000==0) cout <<i <<" "<<->fChain->GetEntries()<<endl;
       j->GetEntry(i);
       if ((*j->LeadingPhotonPt)[0]<40) continue;
       for (int k=0;k<j->SignalJet03JewelPt->size();k++) {
@@ -49,6 +50,8 @@ void plot()
    TTree *tPyquenPP   = (TTree*)infPyquenPP  ->Get("JetTree");
    TTree *tPyquenPbPb = (TTree*)infPyquenPbPb->Get("JetTree");
    
+   TFile *outf = new TFile("output.root","recreate");
+   
    const int nBin = 10;
    double myBins[nBin+1] = {0, 0.015, 0.03, 0.045, 0.06, 0.08, 0.1, 0.12, 0.15, 0.2, 0.3};
    
@@ -57,17 +60,23 @@ void plot()
    TH1D *hPyquenPP   = new TH1D("hPyquenPP","",nBin,myBins);
    TH1D *hPyquenPbPb = new TH1D("hPyquenPbPb","",nBin,myBins);
    
+   
+   cout <<"JetTree"<<endl;
    JetTree *JewelPP    = new JetTree(tJewelPP);
    JetTree *JewelPbPb  = new JetTree(tJewelPbPb);
    JetTree *PyquenPP   = new JetTree(tPyquenPP);
    JetTree *PyquenPbPb = new JetTree(tPyquenPbPb);
 
+   cout <<"Done"<<endl;
    fillDjHist(JewelPP,hJewelPP);
    fillDjHist(JewelPbPb,hJewelPbPb);
    fillDjHist(PyquenPP,hPyquenPP);
    fillDjHist(PyquenPbPb,hPyquenPbPb);
    
    hJewelPP->Draw();
-   
+   hJewelPP->Write();
+   hJewelPbPb->Write();
+   hPyquenPP->Write();
+   hPyquenPbPb->Write();
    
 }
