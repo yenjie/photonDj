@@ -29,7 +29,7 @@ void fillDjHist(JetTree *j, TH1D* h, Data *data, TTree *t)
       for (int k=0;k<j->SignalJet03JewelPt->size();k++) {
          if ((*j->SignalJet03JewelPt)[k]>30 && fabs((*j->SignalJet03JewelEta)[k])<1.6) {
 	    double dPhi_jgamma = fabs(calcPhi((*j->SignalJet03JewelPhi)[k]-(*j->LeadingPhotonPhi)[0]));
-	    if (dPhi_jgamma<3.14159*7./8.) continue;
+	    if (dPhi_jgamma<3.14159/2.) continue;
 	    double dPhi = calcPhi((*j->SignalJet03JewelPhi)[k]-(*j->SignalJet03WTAAxisPhi)[k]);
 	    double dEta = (*j->SignalJet03JewelEta)[k]-(*j->SignalJet03WTAAxisEta)[k];
 	    double dj = sqrt(dPhi*dPhi+dEta*dEta);
