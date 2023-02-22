@@ -8,6 +8,18 @@ public:
 };
 
 
+void setBranch(TTree *outputTree, Data *data)
+{
+  outputTree->Branch("photonPt", &data->photonPt, "photonPt/D");
+  outputTree->Branch("photonEta", &data->photonEta, "photonEta/D");
+  outputTree->Branch("photonPhi", &data->photonPhi, "photonPhi/D");
+  outputTree->Branch("jetPt", &data->jetPt, "jetPt/D");
+  outputTree->Branch("jetEta", &data->jetEta, "jetEta/D");
+  outputTree->Branch("jetPhi", &data->jetPhi, "jetPhi/D");
+  outputTree->Branch("dphi", &data->dphi, "dphi/D");
+  outputTree->Branch("dj", &data->dj, "dj/D");
+}
+
 double calcPhi(double phi)
 {
    phi = fmod(phi + M_PI, 2*M_PI);
@@ -74,19 +86,19 @@ void plot()
    
    TTree* outputTreeJewelPP = new TTree("tJewelPP","");
    Data *dataJewelPP = new Data;
-   outputTreeJewelPP->Branch("data", dataJewelPP, "photonPt/D:photonEta/D:photonPhi/D:jetPt/D:jetEta/D:jetPhi/D:dphi/D:dj/D:weight/D");
+   setBranch(outputTreeJewelPP, dataJewelPP);
    TTree* outputTreeJewelPbPb = new TTree("tJewelPbPb","");
    Data *dataJewelPbPb = new Data;
-   outputTreeJewelPbPb->Branch("data", dataJewelPbPb, "photonPt/D:photonEta/D:photonPhi/D:jetPt/D:jetEta/D:jetPhi/D:dphi/D:dj/D:weight/D");
+   setBranch(outputTreeJewelPbPb, dataJewelPbPb);
    TTree* outputTreePyquenPP = new TTree("tPyquenPP","");
    Data *dataPyquenPP = new Data;
-   outputTreePyquenPP->Branch("data", dataPyquenPP, "photonPt/D:photonEta/D:photonPhi/D:jetPt/D:jetEta/D:jetPhi/D:dphi/D:dj/D:weight/D");
+   setBranch(outputTreePyquenPP, dataPyquenPP);
    TTree* outputTreePyquenPbPb = new TTree("tPyquenPbPb","");
    Data *dataPyquenPbPb = new Data;
-   outputTreePyquenPbPb->Branch("data", dataPyquenPbPb, "photonPt/D:photonEta/D:photonPhi/D:jetPt/D:jetEta/D:jetPhi/D:dphi/D:dj/D:weight/D");
+   setBranch(outputTreePyquenPbPb, dataPyquenPbPb);
    TTree* outputTreePyquenNoWidePbPb = new TTree("tPyquenNoWidePbPb","");
    Data *dataPyquenNoWidePbPb = new Data;
-   outputTreePyquenNoWidePbPb->Branch("data", dataPyquenNoWidePbPb, "photonPt/D:photonEta/D:photonPhi/D:jetPt/D:jetEta/D:jetPhi/D:dphi/D:dj/D:weight/D");
+   setBranch(outputTreePyquenNoWidePbPb, dataPyquenNoWidePbPb);
 
    
    const int nBin = 10;
