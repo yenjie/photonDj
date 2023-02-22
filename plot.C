@@ -18,6 +18,7 @@ void setBranch(TTree *outputTree, Data *data)
   outputTree->Branch("jetPhi", &data->jetPhi, "jetPhi/D");
   outputTree->Branch("dphi", &data->dphi, "dphi/D");
   outputTree->Branch("dj", &data->dj, "dj/D");
+  outputTree->Branch("weight", &data->weight, "weight/D");
 }
 
 double calcPhi(double phi)
