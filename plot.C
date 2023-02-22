@@ -62,11 +62,13 @@ void plot()
    TFile *infJewelPbPb  = new TFile("jewel-PbPb.root");
    TFile *infPyquenPP   = new TFile("pyquen-pp.root");
    TFile *infPyquenPbPb = new TFile("pyquen-PbPb.root");
+   TFile *infPyquenNoWidePbPb = new TFile("PyquenNoWide-PbPb.root");
    
    TTree *tJewelPP    = (TTree*)infJewelPP   ->Get("JetTree");
    TTree *tJewelPbPb  = (TTree*)infJewelPbPb ->Get("JetTree");
    TTree *tPyquenPP   = (TTree*)infPyquenPP  ->Get("JetTree");
    TTree *tPyquenPbPb = (TTree*)infPyquenPbPb->Get("JetTree");
+   TTree *tPyquenNoWidePbPb = (TTree*)infPyquenNoWidePbPb->Get("JetTree");
    
    TFile *outf = new TFile("output.root","recreate");
    
@@ -82,6 +84,9 @@ void plot()
    TTree* outputTreePyquenPbPb = new TTree("tPyquenPbPb","");
    Data *dataPyquenPbPb = new Data;
    outputTreePyquenPbPb->Branch("data", dataPyquenPbPb, "photonPt/D:photonEta/D:photonPhi/D:jetPt/D:jetEta/D:jetPhi/D:dphi/D:dj/D:weight/D");
+   TTree* outputTreePyquenNoWidePbPb = new TTree("tPyquenNoWidePbPb","");
+   Data *dataPyquenNoWidePbPb = new Data;
+   outputTreePyquenNoWidePbPb->Branch("data", dataPyquenNoWidePbPb, "photonPt/D:photonEta/D:photonPhi/D:jetPt/D:jetEta/D:jetPhi/D:dphi/D:dj/D:weight/D");
 
    
    const int nBin = 10;
@@ -91,6 +96,7 @@ void plot()
    TH1D *hJewelPbPb = new TH1D("hJewelPbPb","",nBin,myBins);
    TH1D *hPyquenPP   = new TH1D("hPyquenPP","",nBin,myBins);
    TH1D *hPyquenPbPb = new TH1D("hPyquenPbPb","",nBin,myBins);
+   TH1D *hPyquenNoWidePbPb = new TH1D("hPyquenNoWidePbPb","",nBin,myBins);
    
    
    cout <<"JetTree"<<endl;
@@ -98,21 +104,25 @@ void plot()
    JetTree *JewelPbPb  = new JetTree(tJewelPbPb);
    JetTree *PyquenPP   = new JetTree(tPyquenPP);
    JetTree *PyquenPbPb = new JetTree(tPyquenPbPb);
+   JetTree *PyquenNoWidePbPb = new JetTree(tPyquenNoWidePbPb);
 
    cout <<"Done"<<endl;
    fillDjHist(JewelPP,hJewelPP, dataJewelPP, outputTreeJewelPP);
    fillDjHist(JewelPbPb,hJewelPbPb, dataJewelPbPb, outputTreeJewelPbPb);
    fillDjHist(PyquenPP,hPyquenPP, dataPyquenPP, outputTreePyquenPP);
    fillDjHist(PyquenPbPb,hPyquenPbPb, dataPyquenPbPb, outputTreePyquenPbPb);
+   fillDjHist(PyquenNoWidePbPb,hPyquenNoWidePbPb, dataPyquenNoWidePbPb, outputTreePyquenNoWidePbPb);
    
    hJewelPP->Draw();
    hJewelPP->Write();
    hJewelPbPb->Write();
    hPyquenPP->Write();
    hPyquenPbPb->Write();
+   hPyquenNoWidePbPb->Write();
    outputTreeJewelPP->Write();
    outputTreeJewelPbPb->Write();
    outputTreePyquenPP->Write();
    outputTreePyquenPbPb->Write();
+   outputTreePyquenNoWidePbPb->Write();
    
 }
