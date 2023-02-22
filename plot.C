@@ -62,7 +62,7 @@ void plot()
    TFile *infJewelPbPb  = new TFile("jewel-PbPb.root");
    TFile *infPyquenPP   = new TFile("pyquen-pp.root");
    TFile *infPyquenPbPb = new TFile("pyquen-PbPb.root");
-   TFile *infPyquenNoWidePbPb = new TFile("PyquenNoWide-PbPb.root");
+   TFile *infPyquenNoWidePbPb = new TFile("pyquenNoWide-PbPb.root");
    
    TTree *tJewelPP    = (TTree*)infJewelPP   ->Get("JetTree");
    TTree *tJewelPbPb  = (TTree*)infJewelPbPb ->Get("JetTree");
