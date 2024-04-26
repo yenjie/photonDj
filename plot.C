@@ -11,6 +11,7 @@ public:
     std::vector<Double_t> jetPts;
     std::vector<Double_t> jetEtas;
     std::vector<Double_t> jetPhis;
+    std::vector<Double_t> jetDjs;
     Double_t weight;
 };
 
@@ -21,6 +22,7 @@ void setBranches(TTree *tree, EventData &data) {
     tree->Branch("jetPt", &data.jetPts);
     tree->Branch("jetEta", &data.jetEtas);
     tree->Branch("jetPhi", &data.jetPhis);
+    tree->Branch("jetDj", &data.jetDjs);
     tree->Branch("weight", &data.weight, "weight/D");
 }
 
@@ -45,13 +47,16 @@ void processEvent(JetTree *j, TH1D* h, EventData &data, TTree *tree) {
         data.jetPts.clear();
         data.jetEtas.clear();
         data.jetPhis.clear();
+	data.jetDjs.clear();
         j->GetEntry(i);
         if ((*j->LeadingPhotonPt)[0] < 40) continue;
+        data.photonPts.push_back((*j->LeadingPhotonPt)[0]);
+        data.photonEtas.push_back((*j->LeadingPhotonEta)[0]);
+        data.photonPhis.push_back((*j->LeadingPhotonPhi)[0]);
+
+        data.weight = (*j->EventWeight)[0];
 
         bool hasValidJets = false;
-        std::vector<Double_t> eventJetPts;
-        std::vector<Double_t> eventJetEtas;
-        std::vector<Double_t> eventJetPhis;
 
         // Loop over jets in the event
         for (size_t k = 0; k < j->SignalJet03JewelPt->size(); k++) {
@@ -59,25 +64,19 @@ void processEvent(JetTree *j, TH1D* h, EventData &data, TTree *tree) {
                 double dPhi_jgamma = fabs(calcPhi((*j->SignalJet03JewelPhi)[k] - (*j->LeadingPhotonPhi)[0]));
                 if (dPhi_jgamma < 3.14159 / 2.) continue;
 
-                eventJetPts.push_back((*j->SignalJet03JewelPt)[k]);
-                eventJetEtas.push_back((*j->SignalJet03JewelEta)[k]);
-                eventJetPhis.push_back((*j->SignalJet03JewelPhi)[k]);
-                hasValidJets = true;
+                data.jetPts.push_back((*j->SignalJet03JewelPt)[k]);
+                data.jetEtas.push_back((*j->SignalJet03JewelEta)[k]);
+                data.jetPhis.push_back((*j->SignalJet03JewelPhi)[k]);
+                double dPhi = calcPhi((*j->SignalJet03JewelPhi)[k]-(*j->SignalJet03WTAAxisPhi)[k]);	    
+	        double dEta = (*j->SignalJet03JewelEta)[k]-(*j->SignalJet03WTAAxisEta)[k];
+	        double dj = sqrt(dPhi*dPhi+dEta*dEta);
+                sumEntry += data.weight;
+		h->Fill(dj, data.weight);
+		data.jetDjs.push_back(dj);
             }
         }
 
-        if (hasValidJets) {
-            data.photonPts.push_back((*j->LeadingPhotonPt)[0]);
-            data.photonEtas.push_back((*j->LeadingPhotonEta)[0]);
-            data.photonPhis.push_back((*j->LeadingPhotonPhi)[0]);
-            data.jetPts.insert(data.jetPts.end(), eventJetPts.begin(), eventJetPts.end());
-            data.jetEtas.insert(data.jetEtas.end(), eventJetEtas.begin(), eventJetEtas.end());
-            data.jetPhis.insert(data.jetPhis.end(), eventJetPhis.begin(), eventJetPhis.end());
-
-            data.weight = (*j->EventWeight)[0];
-            sumEntry += data.weight;
-            tree->Fill();
-        }
+        tree->Fill();
     }
 
     h->Scale(1. / sumEntry);
